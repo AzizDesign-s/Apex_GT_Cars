@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0b0f14;
+    color: #f9fafb;
+    font-family: "Montserrat", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111827;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d4af3750;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d4af37;
+  }
+
+  .splash-diamond {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #b8931f, #d4af37, #e8c84a);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0b0f14;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card base */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-glass border border-border rounded-2xl shadow-glass;
+  }
+
+  /* Gold gradient text */
+  .text-gold-gradient {
+    @apply bg-gradient-to-r from-gold-light via-gold to-gold-dark bg-clip-text text-transparent;
+  }
+
+  /* Premium button */
+  .btn-gold {
+    @apply bg-gradient-to-r from-gold-dark via-gold to-gold-light text-base font-semibold 
+           px-6 py-2.5 rounded-xl shadow-gold hover:shadow-gold-lg 
+           transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply border border-border text-text-muted hover:border-gold hover:text-gold 
+           px-6 py-2.5 rounded-xl transition-all duration-300;
+  }
+
+  /* Status badges */
+  .badge-available {
+    @apply bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 
+           text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+  .badge-reserved {
+    @apply bg-sky-500/10 text-sky-400 border border-sky-500/20 
+           text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+  .badge-sold {
+    @apply bg-gold/10 text-gold border border-gold/20 
+           text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+  .badge-maintenance {
+    @apply bg-rose-500/10 text-rose-400 border border-rose-500/20 
+           text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+
+  /* Input field */
+  .input-luxury {
+    @apply bg-card border border-border rounded-xl px-4 py-2.5 text-text-primary 
+           placeholder:text-text-subtle outline-none focus:border-gold/50 
+           focus:ring-1 focus:ring-gold/20 transition-all duration-200 w-full;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
