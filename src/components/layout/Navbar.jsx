@@ -41,20 +41,12 @@ function Navbar() {
   // Derive page title from current URL
   const pageTitle = PAGE_TITLES[location.pathname] || "Dashboard";
 
-  // Get time-based greeting
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
-
   return (
     <div
       className="h-16 mx-3 mt-3 flex-shrink-0
                     bg-card/85  backdrop-blur-[20px]
                     border border-border rounded-2xl
-                    flex items-center px-5 gap-4
+                    flex items-center px-5 gap-4 justify-between
                     shadow-card z-10"
       style={{
         transition: "background-color 0.3s ease, border-color 0.3s ease",
@@ -75,9 +67,7 @@ function Navbar() {
       <div className="flex-shrink-0">
         {/* Show greeting on dashboard, page title everywhere else */}
         <h1 className="text-lg font-bold text-text-primary leading-none">
-          {pageTitle === "Dashboard"
-            ? `${getGreeting()}, ${user?.name || "Admin"} 👋`
-            : pageTitle}
+          {pageTitle}
         </h1>
         <p className="text-[10px] text-text-subtle tracking-widest mt-1.5 uppercase">
           APEX GT / {pageTitle}
@@ -129,7 +119,7 @@ function Navbar() {
         </motion.button>
 
         {/* Notification Bell */}
-        <div className="relative">
+        <div className="relative md:block hidden">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
             className="relative w-9 h-9 rounded-xl border border-border

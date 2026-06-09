@@ -394,11 +394,11 @@ function Sidebar({ isMobile = false }) {
   // ── DESKTOP: Floating sidebar ────────────────────────────────────────────────
   return (
     <motion.aside
-      className="absolute top-3 left-3 bottom-3 z-20
-                 bg-card/85 backdrop-blur-[20px]
-                 border border-border rounded-[20px]
-                 flex flex-col p-4
-                 shadow-glass overflow-hidden"
+      className="fixed top-3 left-3 bottom-3 z-20
+             bg-card/85 backdrop-blur-[20px]
+             border border-border rounded-[20px]
+             flex flex-col p-4
+             shadow-glass overflow-hidden"
       style={{
         transition: "background-color 0.3s ease, border-color 0.3s ease",
       }}

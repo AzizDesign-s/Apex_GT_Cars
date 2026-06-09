@@ -37,7 +37,7 @@ const AppLayout = () => {
   const mainMargin = sidebarOpen ? "lg:ml-[252px]" : "lg:ml-[84px]";
   return (
     // Outer shell — full viewport, relative so sidebar can float inside it
-    <div className="relative flex min-h-screen bg-base overflow-hidden">
+    <div className="relative flex h-screen bg-base overflow-hidden">
       {/* ── Desktop Sidebar (floats absolutely) ── */}
       <div className="hidden lg:block">
         <Sidebar isMobile={false} />
@@ -53,7 +53,7 @@ const AppLayout = () => {
       {/*  transition makes it animate smoothly when sidebar collapses  */}
 
       <div
-        className={`flex flex-col flex-1 min-w-0 min-h-screen
+        className={`flex flex-col flex-1 min-w-0 h-screen
         transition-all duration-300 ease-in-out
         ${mainMargin}`}
       >
