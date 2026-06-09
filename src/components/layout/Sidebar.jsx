@@ -40,47 +40,6 @@ import clsx from "clsx";
 //   3. Clean separation of data from presentation
 // ─────────────────────────────────────────────────────────────────────────────
 
-const NAV_SECTIONS = [
-  {
-    label: "Main",
-    items: [
-      {
-        icon: LayoutDashboard,
-        label: "Dashboard",
-        path: "/dashboard",
-        badge: null,
-      },
-      { icon: Car, label: "Inventory", path: "/inventory", badge: "48" },
-      { icon: Users, label: "Customers", path: "/customers", badge: null },
-      {
-        icon: CalendarCheck,
-        label: "Test Drives",
-        path: "/test-drives",
-        badge: "3",
-      },
-    ],
-  },
-  {
-    label: "Finance",
-    items: [
-      { icon: FileText, label: "Invoices", path: "/invoices", badge: null },
-      { icon: BarChart3, label: "Analytics", path: "/analytics", badge: null },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      {
-        icon: Bell,
-        label: "Notifications",
-        path: "/notifications",
-        badge: "5",
-      },
-      { icon: Settings, label: "Settings", path: "/settings", badge: null },
-    ],
-  },
-];
-
 // ─── ANIMATION VARIANTS ───────────────────────────────────────────────────────
 // Framer Motion variants let you name animation states and switch between them.
 // 'open' = expanded sidebar, 'closed' = icon-only collapsed state
@@ -102,10 +61,61 @@ const drawerVariants = {
 function Sidebar({ isMobile = false }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { sidebarOpen, toggleSidebar, logout } = useAppStore();
+  const { sidebarOpen, toggleSidebar, logout, inventoryCount } = useAppStore();
 
   // On mobile, sidebar is always 'open' width — it's a full drawer
   // On desktop, width is controlled by sidebarOpen state
+
+  const NAV_SECTIONS = [
+    {
+      label: "Main",
+      items: [
+        {
+          icon: LayoutDashboard,
+          label: "Dashboard",
+          path: "/dashboard",
+          badge: null,
+        },
+        {
+          icon: Car,
+          label: "Inventory",
+          path: "/inventory",
+          badge: inventoryCount > 0 ? String(inventoryCount) : null,
+        },
+        { icon: Users, label: "Customers", path: "/customers", badge: null },
+        {
+          icon: CalendarCheck,
+          label: "Test Drives",
+          path: "/test-drives",
+          badge: "3",
+        },
+      ],
+    },
+    {
+      label: "Finance",
+      items: [
+        { icon: FileText, label: "Invoices", path: "/invoices", badge: null },
+        {
+          icon: BarChart3,
+          label: "Analytics",
+          path: "/analytics",
+          badge: null,
+        },
+      ],
+    },
+    {
+      label: "System",
+      items: [
+        {
+          icon: Bell,
+          label: "Notifications",
+          path: "/notifications",
+          badge: "5",
+        },
+        { icon: Settings, label: "Settings", path: "/settings", badge: null },
+      ],
+    },
+  ];
 
   const isOpen = isMobile ? true : sidebarOpen;
 

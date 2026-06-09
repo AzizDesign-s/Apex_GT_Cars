@@ -20,6 +20,9 @@ const useAppStore = create(
       toggleSidebar: () =>
         set((state) => ({ sidebarOpen: !state.sidebarOpen })),
 
+      inventoryCount: 0,
+      setInventoryCount: (n) => set({ inventoryCount: n }),
+
       // ── Auth ─────────────────────────────────────────────────────────────
       isAuthenticated: false,
       user: null,
