@@ -16,6 +16,8 @@ const STYLES = {
   overdue: "bg-rose-400/10   text-rose-400   border-rose-400/25",
   approved: "bg-emerald-400/10 text-emerald-400 border-emerald-400/25",
   rejected: "bg-rose-400/10   text-rose-400   border-rose-400/25",
+  vip: "bg-gold/12       text-gold         border-gold/30",
+  blacklisted: "bg-rose-400/10  text-rose-400    border-rose-400/25",
 };
 
 const DOT_COLORS = {
@@ -31,6 +33,8 @@ const DOT_COLORS = {
   overdue: "bg-rose-400",
   approved: "bg-emerald-400",
   rejected: "bg-rose-400",
+  vip: "bg-gold",
+  blacklisted: "bg-rose-400",
 };
 
 function Badge({ status, label, showDot = true }) {

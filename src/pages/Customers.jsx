@@ -1,7 +1,343 @@
-import React from "react";
+// src/pages/Customers.jsx
 
-const Customers = () => {
-  return <div>Customers</div>;
-};
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { customers as initialCustomers } from "../data/mockData";
+import { DeleteConfirm, ChangeStatusModal } from "../components/ui";
+import CustomerStats from "../components/customers/CustomerStats";
+import CustomerToolbar from "../components/customers/CustomerToolbar";
+import CustomerTable from "../components/customers/CustomerTable";
+import CustomerFilterDrawer from "../components/customers/CustomerFilterDrawer";
+import CustomerFormPage from "../components/customers/CustomerFormPage";
+import CustomerDetailDrawer from "../components/customers/CustomerDetailDrawer";
+import apexToast from "../utils/toast";
+
+const PER_PAGE = 10;
+
+const EMPTY_FILTERS = { status: [], source: "" };
+
+function Customers() {
+  // ── Data ──────────────────────────────────────────────────────────────────
+  const [customers, setCustomers] = useState(initialCustomers);
+
+  // ── Search + filters ──────────────────────────────────────────────────────
+  const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState(EMPTY_FILTERS);
+
+  const filterCount = useMemo(() => {
+    const f = activeFilters;
+    return f.status.length + (f.source ? 1 : 0);
+  }, [activeFilters]);
+
+  // ── Sort ──────────────────────────────────────────────────────────────────
+  const [sortField, setSortField] = useState("name");
+  const [sortDir, setSortDir] = useState("asc");
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  const [page, setPage] = useState(1);
+
+  // ── Column config (persisted to localStorage) ─────────────────────────────
+  const [columns, setColumns] = useState(() => {
+    try {
+      const saved = localStorage.getItem("apex-gt-inventory-cols");
+      return saved ? JSON.parse(saved) : DEFAULT_COLUMNS;
+    } catch {
+      return DEFAULT_COLUMNS;
+    }
+  });
+
+  // ── Selection ─────────────────────────────────────────────────────────────
+  const [selected, setSelected] = useState(new Set());
+
+  // ── UI state ──────────────────────────────────────────────────────────────
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [colMgrOpen, setColMgrOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editCustomer, setEditCustomer] = useState(null);
+  const [viewCustomer, setViewCustomer] = useState(null);
+  const [viewIndex, setViewIndex] = useState(0);
+  const [deleteCustomer, setDeleteCustomer] = useState(null);
+  const [deleteBulk, setDeleteBulk] = useState(false);
+  const [statusModal, setStatusModal] = useState(false);
+
+  // ── Stats ─────────────────────────────────────────────────────────────────
+  const stats = useMemo(
+    () => ({
+      total: customers.length,
+      active: customers.filter((c) => c.status === "active").length,
+      prospect: customers.filter((c) => c.status === "prospect").length,
+      vip: customers.filter((c) => c.status === "vip").length,
+      inactive: customers.filter((c) => c.status === "inactive").length,
+      blacklisted: customers.filter((c) => c.status === "blacklisted").length,
+    }),
+    [customers],
+  );
+
+  // ── Filtered + sorted ─────────────────────────────────────────────────────
+  const filtered = useMemo(() => {
+    let data = [...customers];
+    const f = activeFilters;
+
+    if (search) {
+      const q = search.toLowerCase();
+      data = data.filter((c) =>
+        `${c.name} ${c.customerId} ${c.email} ${c.mobile} ${c.mobileCode}`
+          .toLowerCase()
+          .includes(q),
+      );
+    }
+    if (f.status.length) data = data.filter((c) => f.status.includes(c.status));
+    if (f.source) data = data.filter((c) => c.source === f.source);
+
+    data.sort((a, b) => {
+      let av, bv;
+      if (sortField === "purchases") {
+        av = a.purchases?.length || 0;
+        bv = b.purchases?.length || 0;
+      } else if (sortField === "spent") {
+        av = a.purchases?.reduce((s, p) => s + p.amount, 0) || 0;
+        bv = b.purchases?.reduce((s, p) => s + p.amount, 0) || 0;
+      } else {
+        av = a[sortField] ?? "";
+        bv = b[sortField] ?? "";
+      }
+      const cmp = String(av).localeCompare(String(bv), undefined, {
+        numeric: true,
+      });
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return data;
+  }, [customers, search, activeFilters, sortField, sortDir]);
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const pageData = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+  const handleSort = useCallback((field) => {
+    setSortField((prev) => {
+      if (prev === field) {
+        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+        return prev;
+      }
+      setSortDir("asc");
+      return field;
+    });
+    setPage(1);
+  }, []);
+
+  const toggleSelect = useCallback((id) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }, []);
+
+  const selectAll = useCallback(
+    (checked) => {
+      setSelected(checked ? new Set(pageData.map((c) => c.id)) : new Set());
+    },
+    [pageData],
+  );
+
+  const handleSave = useCallback((data) => {
+    setCustomers((prev) => {
+      const exists = prev.find((c) => c.id === data.id);
+      return exists
+        ? prev.map((c) => (c.id === data.id ? data : c))
+        : [data, ...prev];
+    });
+    setPage(1);
+  }, []);
+
+  const handleDelete = useCallback((customer) => {
+    setCustomers((prev) => prev.filter((c) => c.id !== customer.id));
+    setDeleteCustomer(null);
+    setViewCustomer(null);
+    apexToast.info(
+      "Customer Removed",
+      `${customer.name} removed successfully.`,
+    );
+  }, []);
+
+  const handleBulkDelete = useCallback(() => {
+    const count = selected.size;
+    setCustomers((prev) => prev.filter((c) => !selected.has(c.id)));
+    setSelected(new Set());
+    setDeleteBulk(false);
+    apexToast.info(
+      "Bulk Delete",
+      `${count} customer${count > 1 ? "s" : ""} removed.`,
+    );
+  }, [selected]);
+
+  const handleStatusChange = useCallback(
+    (newStatus) => {
+      if (!newStatus) return;
+      const count = selected.size;
+      setCustomers((prev) =>
+        prev.map((c) => (selected.has(c.id) ? { ...c, status: newStatus } : c)),
+      );
+      setSelected(new Set());
+      setStatusModal(false);
+      apexToast.success(
+        "Status Updated",
+        `${count} customer${count > 1 ? "s" : ""} marked as ${newStatus}.`,
+      );
+    },
+    [selected],
+  );
+
+  const handleReset = useCallback(() => {
+    setSearch("");
+    setActiveFilters(EMPTY_FILTERS);
+    setPage(1);
+    apexToast.success("Refreshed", "Filters cleared.");
+  }, []);
+
+  const handleExport = useCallback(
+    (type) => {
+      apexToast.info(
+        `Export ${type}`,
+        `Exporting ${filtered.length} customers as ${type}.`,
+      );
+    },
+    [filtered.length],
+  );
+
+  const openView = useCallback(
+    (customer) => {
+      // Find the index in filtered so avatar color matches table row
+      const idx = filtered.findIndex((c) => c.id === customer.id);
+      setViewIndex(idx >= 0 ? idx % 6 : 0);
+      setViewCustomer(customer);
+    },
+    [filtered],
+  );
+
+  const openEditForm = useCallback((customer) => {
+    setEditCustomer(customer);
+    setViewCustomer(null);
+    setFormOpen(true);
+  }, []);
+
+  const openDeleteFromDrawer = useCallback((customer) => {
+    setViewCustomer(null);
+    setDeleteCustomer(customer);
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  return (
+    <div className="flex flex-col gap-3 h-full pb-3">
+      <CustomerStats stats={stats} />
+
+      <CustomerToolbar
+        search={search}
+        onSearch={(s) => {
+          setSearch(s);
+          setPage(1);
+        }}
+        filterCount={filterCount}
+        onFilterOpen={() => setFilterOpen(true)}
+        colMgrOpen={colMgrOpen}
+        onColMgrToggle={() => setColMgrOpen((prev) => !prev)}
+        columns={columns}
+        onColumnsChange={setColumns}
+        selected={selected}
+        onClearSelected={() => setSelected(new Set())}
+        onChangeStatus={() => setStatusModal(true)}
+        onDeleteSelected={() => setDeleteBulk(true)}
+        onRefresh={handleReset}
+        onExport={handleExport}
+        onAddCustomer={() => {
+          setEditCustomer(null);
+          setFormOpen(true);
+        }}
+      />
+
+      <CustomerTable
+        data={pageData}
+        total={filtered.length}
+        page={page}
+        onPage={(p) => {
+          setPage(p);
+          setSelected(new Set());
+        }}
+        perPage={PER_PAGE}
+        selected={selected}
+        onToggleSelect={toggleSelect}
+        onSelectAll={selectAll}
+        sortField={sortField}
+        sortDir={sortDir}
+        onSort={handleSort}
+        onView={openView}
+        onEdit={openEditForm}
+        onDelete={setDeleteCustomer}
+        onClearFilters={handleReset}
+      />
+
+      <CustomerFilterDrawer
+        isOpen={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        onApply={(f) => {
+          setActiveFilters(f);
+          setPage(1);
+        }}
+        activeCount={filterCount}
+      />
+
+      <CustomerDetailDrawer
+        customer={viewCustomer}
+        isOpen={!!viewCustomer}
+        index={viewIndex}
+        onClose={() => setViewCustomer(null)}
+        onEdit={openEditForm}
+        onDelete={openDeleteFromDrawer}
+      />
+
+      <CustomerFormPage
+        isOpen={formOpen}
+        onClose={() => {
+          setFormOpen(false);
+          setEditCustomer(null);
+        }}
+        onSave={handleSave}
+        editCustomer={editCustomer}
+        allCustomers={customers}
+      />
+
+      <DeleteConfirm
+        isOpen={!!deleteCustomer}
+        onClose={() => setDeleteCustomer(null)}
+        onConfirm={() => handleDelete(deleteCustomer)}
+        title="Delete Customer?"
+        itemName={deleteCustomer?.name}
+        confirmText={deleteCustomer?.name}
+      />
+
+      <DeleteConfirm
+        isOpen={deleteBulk}
+        onClose={() => setDeleteBulk(false)}
+        onConfirm={handleBulkDelete}
+        title={`Delete ${selected.size} Customer${selected.size > 1 ? "s" : ""}?`}
+        description={`This will permanently remove ${selected.size} selected customer${selected.size > 1 ? "s" : ""}. This cannot be undone.`}
+      />
+
+      <ChangeStatusModal
+        isOpen={statusModal}
+        onClose={() => setStatusModal(false)}
+        onConfirm={handleStatusChange}
+        count={selected.size}
+        statusOptions={[
+          { value: "active", label: "Active" },
+          { value: "prospect", label: "Prospect" },
+          { value: "inactive", label: "Inactive" },
+          { value: "vip", label: "VIP" },
+          { value: "blacklisted", label: "Blacklisted" },
+        ]}
+      />
+    </div>
+  );
+}
 
 export default Customers;

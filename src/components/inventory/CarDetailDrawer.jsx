@@ -43,7 +43,7 @@ function CarDetailDrawer({ car, isOpen, onClose, onEdit, onDelete }) {
 
           {/* Drawer */}
           <motion.div
-            className="fixed top-0 right-0 bottom-0 w-[400px] z-40
+            className="fixed top-0 right-0 bottom-0 lg:w-[400px] w-11/12 z-40
                        bg-card border-l border-border flex flex-col shadow-glass"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -52,7 +52,7 @@ function CarDetailDrawer({ car, isOpen, onClose, onEdit, onDelete }) {
           >
             {/* Header */}
             <div
-              className="flex items-start justify-between px-5 py-4
+              className="flex items-start justify-between px-2 py-4
                             border-b border-border flex-shrink-0"
             >
               <div>
@@ -74,7 +74,7 @@ function CarDetailDrawer({ car, isOpen, onClose, onEdit, onDelete }) {
             </div>
 
             {/* Scrollable body */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 scrollbar-none space-y-4">
+            <div className="flex-1 overflow-y-auto px-2 py-4 scrollbar-none space-y-4">
               {/* Hero image / placeholder */}
               <div
                 className="w-full h-auto rounded-2xl bg-base border border-border

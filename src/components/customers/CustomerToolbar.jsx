@@ -1,29 +1,18 @@
-// src/components/inventory/InventoryToolbar.jsx
-//
-// The main action bar above the table.
-// Contains: search, filter trigger, column manager trigger,
-//           3-dot more menu, and Add Car button.
-// Also renders the bulk action bar when rows are selected.
-//
-// Props:
-//   search, onSearch
-//   filterCount, onFilterOpen
-//   colMgrOpen, onColMgrToggle, columns, onColumnsChange
-//   selected (Set), onClearSelected, onChangeStatus, onDeleteSelected
-//   onRefresh, onExport, onAddCar
+// src/components/customers/CustomerToolbar.jsx
+// Same pattern as InventoryToolbar — mobile search popup included
 
-import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   SlidersHorizontal,
-  Columns,
   RefreshCw,
   FileSpreadsheet,
   FileText,
-  Plus,
-  Tag,
+  Columns,
+  UserPlus,
   Trash2,
+  Tag,
   X,
 } from "lucide-react";
 import { Button } from "../ui";
@@ -31,7 +20,7 @@ import MoreMenu from "../ui/MoreMenu";
 import ColumnManager from "./ColumnManager";
 import clsx from "clsx";
 
-function InventoryToolbar({
+function CustomerToolbar({
   search,
   onSearch,
   filterCount = 0,
@@ -46,46 +35,13 @@ function InventoryToolbar({
   onDeleteSelected,
   onRefresh,
   onExport,
-  onAddCar,
+  onAddCustomer,
 }) {
-  const hasSelection = selected?.size > 0;
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const hasSelection = selected?.size > 0;
 
   return (
-    <div className="flex flex-col gap-2 ">
-      {/* ── Bulk action bar — slides in when rows are selected ── */}
-      {hasSelection && (
-        <motion.div
-          className="flex items-center gap-2 bg-gold/[0.04] border border-gold/15
-                     rounded-xl px-4 py-2 "
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-        >
-          {/* Count */}
-          <span className="text-xs font-bold text-gold">
-            {selected.size} car{selected.size > 1 ? "s" : ""} selected
-          </span>
-
-          <div className="flex-1" />
-
-          <Button size="sm" variant="ghost" onClick={onClearSelected}>
-            Clear
-          </Button>
-          <Button size="sm" variant="sky" icon={Tag} onClick={onChangeStatus}>
-            Change Status
-          </Button>
-          <Button
-            size="sm"
-            variant="danger"
-            icon={Trash2}
-            onClick={onDeleteSelected}
-          >
-            Delete Selected
-          </Button>
-        </motion.div>
-      )}
-
+    <div className="flex flex-col gap-2">
       {/* ── Mobile search overlay ── */}
       <AnimatePresence>
         {mobileSearchOpen && (
@@ -114,7 +70,7 @@ function InventoryToolbar({
                 />
                 <input
                   className="input-luxury flex-1 py-2.5 text-sm"
-                  placeholder="Search brand, model, plate..."
+                  placeholder="Search name, ID, email, phone..."
                   value={search}
                   onChange={(e) => onSearch(e.target.value)}
                   autoFocus
@@ -132,9 +88,41 @@ function InventoryToolbar({
         )}
       </AnimatePresence>
 
+      {/* ── Bulk action bar ── */}
+      {hasSelection && (
+        <motion.div
+          className="flex items-center gap-2 bg-gold/[0.04] border border-gold/15
+                     rounded-xl px-4 py-2 "
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+        >
+          <span className="text-xs font-bold text-gold">
+            {selected.size} customer{selected.size > 1 ? "s" : ""} selected
+          </span>
+
+          <div className="flex-1" />
+
+          <Button size="sm" variant="ghost" onClick={onClearSelected}>
+            Clear
+          </Button>
+          <Button size="sm" variant="sky" icon={Tag} onClick={onChangeStatus}>
+            Change Status
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            icon={Trash2}
+            onClick={onDeleteSelected}
+          >
+            Delete Selected
+          </Button>
+        </motion.div>
+      )}
+
       {/* ── Main toolbar ── */}
       <div className="flex items-center gap-2 bg-card border border-border rounded-2xl px-3 py-2.5">
-        {/* Desktop search — hidden on mobile */}
+        {/* Desktop search */}
         <div className="relative flex-1 max-w-xs hidden lg:block">
           <Search
             size={13}
@@ -148,7 +136,7 @@ function InventoryToolbar({
           />
         </div>
 
-        {/* Mobile search icon — visible only on mobile */}
+        {/* Mobile search icon */}
         <button
           onClick={() => setMobileSearchOpen(true)}
           className={clsx(
@@ -157,18 +145,14 @@ function InventoryToolbar({
               ? "border-gold/40 text-gold bg-gold/5"
               : "border-border text-text-muted hover:border-gold/30 hover:text-gold",
           )}
-          aria-label="Search inventory"
+          aria-label="Search customers"
         >
           <Search size={14} />
-          {/* Dot indicator when search is active */}
-          {search && (
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-gold" />
-          )}
         </button>
 
         <div className="w-px h-5 bg-border flex-shrink-0" />
 
-        {/* Filter — icon only on mobile */}
+        {/* Filter */}
         <Button
           size="sm"
           variant="ghost"
@@ -176,7 +160,6 @@ function InventoryToolbar({
           onClick={onFilterOpen}
           className={clsx(filterCount > 0 && "!border-gold/40 !text-gold"), "h-8 "}
         >
-          {/* Text hidden on mobile */}
           <span className="hidden lg:inline">Filters</span>
           {filterCount > 0 && (
             <span
@@ -207,9 +190,11 @@ function InventoryToolbar({
           />
         </div>
 
+        
+
         <div className="w-px h-5 bg-border flex-shrink-0" />
 
-        {/* More options (3-dot) */}
+        {/* 3-dot more menu */}
         <MoreMenu
           items={[
             { label: "Refresh", icon: RefreshCw, onClick: onRefresh },
@@ -229,13 +214,18 @@ function InventoryToolbar({
 
         <div className="flex-1" />
 
-        {/* Add Car */}
-        <Button variant="primary" size="md" icon={Plus} onClick={onAddCar}>
-        <span className="hidden sm:inline">Add Car</span>
+        {/* Add Customer */}
+        <Button
+          variant="primary"
+          size="md"
+          icon={UserPlus}
+          onClick={onAddCustomer}
+        >
+        <span className="hidden sm:inline">Add Customer</span>
         </Button>
       </div>
     </div>
   );
 }
 
-export default InventoryToolbar;
+export default CustomerToolbar;

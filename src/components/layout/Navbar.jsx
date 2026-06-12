@@ -122,31 +122,33 @@ function Navbar() {
         className="h-16 mx-3 mt-3 flex-shrink-0
                       bg-card/85 backdrop-blur-[20px]
                       border border-border rounded-2xl
-                      flex items-center px-5 gap-4
+                      flex items-center px-4 justify-between gap-4
                       shadow-card z-10"
         style={{
           transition: "background-color 0.3s ease, border-color 0.3s ease",
         }}
       >
         {/* Mobile hamburger */}
-        <button
-          onClick={toggleSidebar}
-          className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center
+        <div className="flex justify-start items-center gap-1">
+          <button
+            onClick={toggleSidebar}
+            className="lg:hidden w-8 h-8 rounded-lg flex items-center justify-center
                      text-text-muted hover:text-text-primary hover:bg-card
                      transition-colors flex-shrink-0"
-          aria-label="Toggle sidebar"
-        >
-          <Menu size={18} />
-        </button>
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={18} />
+          </button>
 
-        {/* Page title + breadcrumb */}
-        <div className="flex-shrink-0">
-          <h1 className="text-base font-bold text-text-primary leading-none">
-            {pageTitle}
-          </h1>
-          <p className="text-[10px] text-text-subtle tracking-widest mt-1.5 uppercase">
-            APEX GT / {pageTitle}
-          </p>
+          {/* Page title + breadcrumb */}
+          <div className="flex-shrink-0">
+            <h1 className="text-base sm:text-sm font-bold text-text-primary  leading-none">
+              {pageTitle}
+            </h1>
+            <p className="lg:text-[10px] text-[7px] text-text-subtle tracking-widest text-wrap mt-1.5 uppercase">
+              APEX GT / {pageTitle}
+            </p>
+          </div>
         </div>
 
         {/* ── Search button — always icon, expands on click ── */}

@@ -137,50 +137,6 @@ export const quickActions = [
   },
 ];
 
-// ── CUSTOMERS (used in Phase 6) ───────────────────────────────────────────────
-export const customers = [
-  {
-    id: 1,
-    name: "Mohammed Al-Rashid",
-    email: "mo.rashid@email.com",
-    phone: "+971 50 123 4567",
-    city: "Dubai",
-    status: "active",
-    purchases: 2,
-    totalSpent: 1060000,
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    phone: "+971 55 987 6543",
-    city: "Abu Dhabi",
-    status: "prospect",
-    purchases: 0,
-    totalSpent: 0,
-  },
-  {
-    id: 3,
-    name: "Khalid Al-Mansoori",
-    email: "k.mansoori@email.com",
-    phone: "+971 52 456 7890",
-    city: "Dubai",
-    status: "active",
-    purchases: 1,
-    totalSpent: 750000,
-  },
-  {
-    id: 4,
-    name: "Emma Williams",
-    email: "emma.w@email.com",
-    phone: "+971 58 321 0987",
-    city: "Sharjah",
-    status: "active",
-    purchases: 3,
-    totalSpent: 2200000,
-  },
-];
-
 // Add to existing mockData.js
 
 // ── COLUMN CONFIG — default table columns ─────────────────────────────────────
@@ -457,6 +413,275 @@ export const cars = [
       {
         url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&q=80",
         label: "Interior",
+      },
+    ],
+  },
+];
+
+// Add to src/data/mockData.js
+
+// ── CUSTOMER DATA ─────────────────────────────────────────────────────────────
+export const CUSTOMER_SOURCES = [
+  "Instagram",
+  "Facebook",
+  "WhatsApp",
+  "Referral",
+  "Walk-in",
+  "Website",
+  "Google Ads",
+  "Exhibition",
+  "Other",
+];
+
+export const COUNTRY_CODES = [
+  { code: "+971", flag: "🇦🇪", label: "UAE" },
+  { code: "+91", flag: "🇮🇳", label: "India" },
+  { code: "+44", flag: "🇬🇧", label: "UK" },
+  { code: "+1", flag: "🇺🇸", label: "USA" },
+  { code: "+966", flag: "🇸🇦", label: "KSA" },
+  { code: "+974", flag: "🇶🇦", label: "Qatar" },
+  { code: "+965", flag: "🇰🇼", label: "Kuwait" },
+  { code: "+973", flag: "🇧🇭", label: "Bahrain" },
+  { code: "+968", flag: "🇴🇲", label: "Oman" },
+];
+
+// Avatar color palette — rotates per customer
+export const AVATAR_PALETTE = [
+  { bg: "rgba(212,175,55,0.15)", text: "#D4AF37" },
+  { bg: "rgba(56,189,248,0.15)", text: "#38BDF8" },
+  { bg: "rgba(16,185,129,0.15)", text: "#10B981" },
+  { bg: "rgba(167,139,250,0.15)", text: "#A78BFA" },
+  { bg: "rgba(251,113,133,0.15)", text: "#FB7185" },
+  { bg: "rgba(251,191,36,0.15)", text: "#FBBF24" },
+];
+
+// Auto-generate next customer ID
+export const generateCustomerId = (existingCustomers) => {
+  const max = existingCustomers.reduce((acc, c) => {
+    const num = parseInt(c.customerId?.replace("CUST-", "") || "0");
+    return Math.max(acc, num);
+  }, 0);
+  return `CUST-${String(max + 1).padStart(3, "0")}`;
+};
+
+export const customers = [
+  {
+    id: 1,
+    customerId: "CUST-001",
+    name: "Mohammed Al-Rashid",
+    email: "mo.rashid@email.com",
+    mobileCode: "+971",
+    mobile: "50 123 4567",
+    whatsappCode: "+971",
+    whatsapp: "50 123 4567",
+    dob: "1985-03-14",
+    source: "Instagram",
+    instagram: "@mo.rashid",
+    facebook: "Mohammed Al-Rashid",
+    status: "active",
+    notes: "High value customer. Prefers AMG variants.",
+    createdAt: "2024-01-15",
+    purchases: [
+      {
+        car: "Mercedes AMG GT 63S",
+        amount: 680000,
+        invoice: "INV-0038",
+        method: "Cash",
+        date: "Mar 2024",
+      },
+      {
+        car: "BMW M8 Competition",
+        amount: 380000,
+        invoice: "INV-0021",
+        method: "Finance",
+        date: "Jan 2024",
+      },
+    ],
+    inquiries: [
+      {
+        type: "test_drive",
+        car: "Rolls Royce Ghost",
+        status: "Approved",
+        note: "Assigned: Ahmed Sales",
+        date: "May 2024",
+      },
+      {
+        type: "inquiry",
+        car: "Lamborghini Urus",
+        status: "Responded",
+        note: "Via WhatsApp · Pricing requested",
+        date: "Apr 2024",
+      },
+      {
+        type: "test_drive",
+        car: "Ferrari 488 Pista",
+        status: "Completed",
+        note: "Customer purchased AMG GT instead",
+        date: "Feb 2024",
+      },
+    ],
+  },
+  {
+    id: 2,
+    customerId: "CUST-002",
+    name: "Sarah Johnson",
+    email: "sarah.j@email.com",
+    mobileCode: "+971",
+    mobile: "55 987 6543",
+    whatsappCode: "+971",
+    whatsapp: "55 987 6543",
+    dob: "1990-07-22",
+    source: "Facebook",
+    instagram: "",
+    facebook: "Sarah Johnson",
+    status: "prospect",
+    notes: "Interested in Rolls Royce. Follow up needed.",
+    createdAt: "2024-03-10",
+    purchases: [],
+    inquiries: [
+      {
+        type: "inquiry",
+        car: "Rolls Royce Ghost EWB",
+        status: "Pending",
+        note: "Via Facebook DM",
+        date: "Mar 2024",
+      },
+    ],
+  },
+  {
+    id: 3,
+    customerId: "CUST-003",
+    name: "Khalid Al-Mansoori",
+    email: "k.mansoori@email.com",
+    mobileCode: "+971",
+    mobile: "52 456 7890",
+    whatsappCode: "+971",
+    whatsapp: "52 456 7890",
+    dob: "1978-11-05",
+    source: "Referral",
+    instagram: "@khalid_m",
+    facebook: "",
+    status: "vip",
+    notes: "VIP. Contact owner directly for deals.",
+    createdAt: "2023-11-20",
+    purchases: [
+      {
+        car: "Lamborghini Urus Performante",
+        amount: 750000,
+        invoice: "INV-0015",
+        method: "Cash",
+        date: "Dec 2023",
+      },
+    ],
+    inquiries: [
+      {
+        type: "test_drive",
+        car: "Rolls Royce Cullinan",
+        status: "Completed",
+        note: "VIP private showing",
+        date: "Jan 2024",
+      },
+      {
+        type: "inquiry",
+        car: "Bentley Continental GT",
+        status: "Responded",
+        note: "Pricing sent via WhatsApp",
+        date: "Feb 2024",
+      },
+    ],
+  },
+  {
+    id: 4,
+    customerId: "CUST-004",
+    name: "Emma Williams",
+    email: "emma.w@email.com",
+    mobileCode: "+44",
+    mobile: "79 8321 0987",
+    whatsappCode: "+44",
+    whatsapp: "79 8321 0987",
+    dob: "1988-04-18",
+    source: "Walk-in",
+    instagram: "@emmaw_dubai",
+    facebook: "Emma Williams",
+    status: "active",
+    notes: "Frequent buyer. Birthday in April — send offer.",
+    createdAt: "2023-08-05",
+    purchases: [
+      {
+        car: "Porsche 911 Turbo S",
+        amount: 620000,
+        invoice: "INV-0009",
+        method: "Cash",
+        date: "Sep 2023",
+      },
+      {
+        car: "Ferrari 488 Pista",
+        amount: 920000,
+        invoice: "INV-0022",
+        method: "Finance",
+        date: "Jan 2024",
+      },
+      {
+        car: "Rolls Royce Ghost EWB",
+        amount: 1800000,
+        invoice: "INV-0041",
+        method: "Cash",
+        date: "Apr 2024",
+      },
+    ],
+    inquiries: [
+      {
+        type: "test_drive",
+        car: "Bentley Bentayga",
+        status: "Completed",
+        note: "Decided on Rolls instead",
+        date: "Mar 2024",
+      },
+    ],
+  },
+  {
+    id: 5,
+    customerId: "CUST-005",
+    name: "Ravi Krishnamurthy",
+    email: "ravi.k@email.com",
+    mobileCode: "+91",
+    mobile: "98765 43210",
+    whatsappCode: "+91",
+    whatsapp: "98765 43210",
+    dob: "1992-09-30",
+    source: "Instagram",
+    instagram: "@ravi_k_official",
+    facebook: "",
+    status: "inactive",
+    notes: "No response after initial inquiry.",
+    createdAt: "2024-06-01",
+    purchases: [],
+    inquiries: [],
+  },
+  {
+    id: 6,
+    customerId: "CUST-006",
+    name: "Ahmed Al-Farsi",
+    email: "ahmed.f@email.com",
+    mobileCode: "+971",
+    mobile: "54 111 2233",
+    whatsappCode: "+971",
+    whatsapp: "54 111 2233",
+    dob: "1975-01-20",
+    source: "Website",
+    instagram: "",
+    facebook: "",
+    status: "blacklisted",
+    notes: "Payment dispute. Do not engage.",
+    createdAt: "2024-02-10",
+    purchases: [],
+    inquiries: [
+      {
+        type: "test_drive",
+        car: "Lamborghini Huracán",
+        status: "Cancelled",
+        note: "No show",
+        date: "Feb 2024",
       },
     ],
   },
