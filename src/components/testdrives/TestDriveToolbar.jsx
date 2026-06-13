@@ -159,7 +159,7 @@ function TestDriveToolbar({
           variant="ghost"
           icon={SlidersHorizontal}
           onClick={onFilterOpen}
-          className={clsx(filterCount > 0 && "!border-gold/40 !text-gold")}
+          className={clsx(filterCount > 0 && "!border-gold/40 !text-gold"), "h-8 "}
         >
           <span className="hidden lg:inline">Filters</span>
           {filterCount > 0 && (
@@ -179,7 +179,7 @@ function TestDriveToolbar({
             variant="ghost"
             icon={Columns}
             onClick={onColMgrToggle}
-            className={clsx(colMgrOpen && "!border-gold/40 !text-gold")}
+            className={clsx(colMgrOpen && "!border-gold/40 !text-gold"), "h-8"}
           >
             <span className="hidden lg:inline">Columns</span>
           </Button>
@@ -246,7 +246,7 @@ function TestDriveToolbar({
 
         <Button
           variant="primary"
-          size="sm"
+          size="md"
           icon={CalendarPlus}
           onClick={onAddBooking}
         >

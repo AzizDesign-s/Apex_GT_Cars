@@ -37,7 +37,7 @@ function FormSection({ title, children }) {
     <div className="bg-card border border-border rounded-2xl p-5 mb-4">
       <p
         className="text-[9px] font-bold tracking-[0.25em] text-gold uppercase
-                    mb-4 pb-2.5 border-b border-border/60"
+                    mb-4 pb-2.5 border-b border-border"
       >
         {title}
       </p>
@@ -158,10 +158,10 @@ function TestDriveFormPage({
         >
           {/* Header */}
           <div
-            className="flex-shrink-0 bg-card border-b border-border px-6 py-4
+            className="flex-shrink-0 bg-card border-b border-border px-4 py-4
                           flex items-center justify-between sticky top-0 z-10"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <button
                 onClick={onClose}
                 className="w-9 h-9 rounded-xl border border-border flex items-center justify-center
@@ -171,27 +171,29 @@ function TestDriveFormPage({
                 <ArrowLeft size={16} />
               </button>
               <div>
-                <h2 className="text-sm font-extrabold text-text-primary">
+                <h2 className="lg:text-sm text-[12px] font-extrabold text-text-primary">
                   {editBooking
                     ? `Edit · ${editBooking.bookingId}`
                     : "Book Test Drive"}
                 </h2>
-                <p className="text-[10px] text-text-subtle mt-0.5">
+                <p className="text-[10px] text-text-subtle mt-1.5">
                   ID auto-generated · Required fields marked *
                 </p>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={onClose}>
                 Cancel
               </Button>
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 icon={Check}
                 onClick={handleSave}
               >
-                {editBooking ? "Update Booking" : "Save Booking"}
+                <span className="hidden sm:inline">
+                  {editBooking ? "Update Booking" : "Save Booking"}
+                </span>
               </Button>
             </div>
           </div>
@@ -201,7 +203,7 @@ function TestDriveFormPage({
             <div className="max-w-2xl mx-auto px-6 py-6">
               {/* Booking Identity */}
               <FormSection title="Booking Identity">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
                   <Field label="Booking ID">
                     <div
                       className="input-luxury py-2 text-xs font-bold text-gold
@@ -245,7 +247,7 @@ function TestDriveFormPage({
 
               {/* Customer & Car */}
               <FormSection title="Customer & Car">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                   <Field label="Customer" required error={errors.customerId}>
                     <Select
                       value={form.customerId}
@@ -287,7 +289,7 @@ function TestDriveFormPage({
 
               {/* Date, Time & Location */}
               <FormSection title="Date, Time & Location">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
                   <Field label="Date" required error={errors.date}>
                     <input
                       type="date"
@@ -315,7 +317,7 @@ function TestDriveFormPage({
                       ]}
                     />
                   </Field>
-                  <div className="col-span-3">
+                  <div className="lg:col-span-3 col-span-1">
                     <Field label="Location">
                       <Input
                         placeholder="e.g. APEX GT Showroom, Sheikh Zayed Road, Dubai"
@@ -329,7 +331,7 @@ function TestDriveFormPage({
 
               {/* Assignment & Notes */}
               <FormSection title="Assignment & Notes">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
                   <Field label="Sales Executive">
                     <Select
                       value={form.exec}
@@ -361,7 +363,7 @@ function TestDriveFormPage({
             </Button>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               icon={Check}
               onClick={handleSave}
             >

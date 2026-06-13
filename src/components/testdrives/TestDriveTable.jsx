@@ -17,13 +17,13 @@ import clsx from "clsx";
 // ── Column widths ─────────────────────────────────────────────────────────────
 const COL_WIDTH = {
   bookingId: "110px",
-  customer: undefined,
-  car: "180px",
-  datetime: "140px",
-  exec: "130px",
+  customer: "160px",
+  car: "160px",
+  datetime: "110px",
+  exec: "110px",
   location: "160px",
   duration: "90px",
-  status: "115px",
+  status: "90px",
 };
 
 function SortIcon({ active, dir }) {
@@ -69,6 +69,7 @@ function Pagination({ page, totalPages, total, perPage, onPage }) {
           className="w-7 h-7 rounded-lg border border-border flex items-center justify-center
                      text-text-muted hover:text-gold hover:border-gold/30 transition-all
                      disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+          aria-label="Previous page"
         >
           ‹
         </button>
@@ -102,6 +103,7 @@ function Pagination({ page, totalPages, total, perPage, onPage }) {
           className="w-7 h-7 rounded-lg border border-border flex items-center justify-center
                      text-text-muted hover:text-gold hover:border-gold/30 transition-all
                      disabled:opacity-30 disabled:cursor-not-allowed text-sm"
+          aria-label="Next page"
         >
           ›
         </button>
@@ -152,14 +154,14 @@ function TestDriveTable({
       <div className="flex-1 overflow-auto scrollbar-none">
         <table
           className="w-full border-collapse"
-          style={{ tableLayout: "fixed", minWidth: "750px" }}
+          style={{ tableLayout: "fixed", minWidth: "680px" }}
         >
           <colgroup>
-            <col style={{ width: "44px" }} />
+            <col style={{ width: "50px" }} />
             {visibleCols.map((col) => (
               <col key={col.id} style={{ width: COL_WIDTH[col.id] }} />
             ))}
-            <col style={{ width: "110px" }} />
+            <col style={{ width: "140px" }} />
           </colgroup>
 
           {/* Header */}
@@ -224,7 +226,7 @@ function TestDriveTable({
                 <motion.tr
                   key={booking.id}
                   className={clsx(
-                    "border-b border-border/50 last:border-0 cursor-pointer",
+                    "border-b border-border last:border-0 cursor-pointer",
                     "hover:bg-gold/[0.02] transition-colors",
                     selected.has(booking.id) && "bg-gold/[0.04]",
                   )}
@@ -240,7 +242,7 @@ function TestDriveTable({
                 >
                   {/* Checkbox */}
                   <td
-                    className="px-4 py-3"
+                    className="px-4 py-5"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <input

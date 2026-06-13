@@ -76,7 +76,7 @@ function TestDriveFilterDrawer({ isOpen, onClose, onApply, activeCount = 0 }) {
             onClick={onClose}
           />
           <motion.div
-            className="fixed top-0 right-0 bottom-0 w-72 z-40
+            className="fixed top-0 right-0 bottom-0 lg:w-[400px] w-11/12 z-40
                        bg-card border-l border-border flex flex-col shadow-glass"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -137,7 +137,7 @@ function TestDriveFilterDrawer({ isOpen, onClose, onApply, activeCount = 0 }) {
                 <div className="flex flex-col gap-2">
                   <input
                     type="date"
-                    className="input-luxury text-xs py-2"
+                    className="input-luxury text-xs py-2 "
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
                     placeholder="From"
