@@ -128,6 +128,7 @@ function Pagination({ page, totalPages, total, perPage, onPage }) {
 // ── Main table ────────────────────────────────────────────────────────────────
 function CustomerTable({
   data = [],
+  columns = [],
   total = 0,
   page = 1,
   onPage,
@@ -145,18 +146,10 @@ function CustomerTable({
 }) {
   const allSelected = data.length > 0 && data.every((c) => selected.has(c.id));
   const totalPages = Math.ceil(total / perPage);
+  const visibleCols = columns.filter((c) => c.visible);
 
   const totalSpent = (customer) =>
     customer.purchases?.reduce((sum, p) => sum + p.amount, 0) || 0;
-
-  const SORTABLE_COLS = [
-    { key: "name", label: "Customer", width: "290px" },
-    { key: "status", label: "Status", width: "160px" },
-    { key: "mobile", label: "Mobile", width: "160px" },
-    { key: "source", label: "Source", width: "110px" },
-    { key: "purchases", label: "Purchases", width: "90px" },
-    { key: "spent", label: "Total Spent", width: "130px" },
-  ];
 
   return (
     <div
@@ -170,8 +163,30 @@ function CustomerTable({
         >
           <colgroup>
             <col style={{ width: "50px" }} />
-            {SORTABLE_COLS.map((col) => (
-              <col key={col.key} style={{ width: col.width }} />
+            {visibleCols.map((col) => (
+              <col
+                key={col.id}
+                style={{
+                  width:
+                    col.id === "customer"
+                      ? "290px"
+                      : col.id === "status"
+                        ? "120px"
+                        : col.id === "mobile"
+                          ? "160px"
+                          : col.id === "source"
+                            ? "120px"
+                            : col.id === "purchases"
+                              ? "120px"
+                              : col.id === "spent"
+                                ? "120px"
+                                : col.id === "dob"
+                                  ? "120px"
+                                  : col.id === "instagram"
+                                    ? "120px"
+                                    : "100px",
+                }}
+              />
             ))}
             <col style={{ width: "140px" }} />
           </colgroup>
@@ -188,16 +203,16 @@ function CustomerTable({
                   aria-label="Select all"
                 />
               </th>
-              {SORTABLE_COLS.map((col) => (
+              {visibleCols.map((col) => (
                 <th
-                  key={col.key}
+                  key={col.id}
                   className="px-4 py-3 text-left text-[9px] font-bold tracking-[0.2em]
                              text-text-subtle uppercase whitespace-nowrap select-none cursor-pointer
                              hover:text-text-muted"
-                  onClick={() => onSort(col.key)}
+                  onClick={() => onSort(col.id)}
                 >
                   {col.label}
-                  <SortIcon active={sortField === col.key} dir={sortDir} />
+                  <SortIcon active={sortField === col.id} dir={sortDir} />
                 </th>
               ))}
               <th
@@ -213,7 +228,7 @@ function CustomerTable({
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={SORTABLE_COLS.length + 2}>
+                <td colSpan={visibleCols.length + 2}>
                   <EmptyState
                     icon={Users}
                     title="No customers found"
@@ -332,6 +347,14 @@ function CustomerTable({
                       ) : (
                         <span className="text-xs text-text-subtle">—</span>
                       )}
+                    </td>
+
+                    <td className="px-4 py-3 text-xs text-text-muted align-middle">
+                      {customer.dob}
+                    </td>
+
+                    <td className="px-4 py-3 text-xs text-text-muted align-middle">
+                      {customer.instagram}
                     </td>
 
                     {/* Actions */}

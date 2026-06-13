@@ -10,6 +10,7 @@ import clsx from "clsx";
 function MoreMenu({ items = [] }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
+  const popupRef = useRef();
 
   // Close on outside click
   useEffect(() => {
@@ -19,6 +20,20 @@ function MoreMenu({ items = [] }) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // ── Edge detection ──
+  useEffect(() => {
+    if (!open || !popupRef.current) return;
+    const rect = popupRef.current.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) {
+      popupRef.current.style.right = "auto";
+      popupRef.current.style.left = "0";
+    }
+    if (rect.left < 8) {
+      popupRef.current.style.left = "auto";
+      popupRef.current.style.right = "0";
+    }
+  }, [open]);
 
   return (
     <div className="relative" ref={ref}>
@@ -38,6 +53,7 @@ function MoreMenu({ items = [] }) {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={popupRef}
             className="absolute right-0 top-[calc(100%+6px)] w-44 bg-card border border-border
                        rounded-xl shadow-glass z-30 overflow-hidden py-1"
             initial={{ opacity: 0, y: -6, scale: 0.95 }}

@@ -1,7 +1,9 @@
 // src/pages/Customers.jsx
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { exportToExcel, exportToPDF } from "../utils/exportUtils";
 import { customers as initialCustomers } from "../data/mockData";
+import { DEFAULT_CUSTOMER_COLUMNS } from "../data/mockData";
 import { DeleteConfirm, ChangeStatusModal } from "../components/ui";
 import CustomerStats from "../components/customers/CustomerStats";
 import CustomerToolbar from "../components/customers/CustomerToolbar";
@@ -35,15 +37,19 @@ function Customers() {
   // ── Pagination ────────────────────────────────────────────────────────────
   const [page, setPage] = useState(1);
 
-  // ── Column config (persisted to localStorage) ─────────────────────────────
+  // Add inside Customers():
   const [columns, setColumns] = useState(() => {
     try {
-      const saved = localStorage.getItem("apex-gt-inventory-cols");
-      return saved ? JSON.parse(saved) : DEFAULT_COLUMNS;
+      const saved = localStorage.getItem("apex-gt-customer-cols");
+      return saved ? JSON.parse(saved) : DEFAULT_CUSTOMER_COLUMNS;
     } catch {
-      return DEFAULT_COLUMNS;
+      return DEFAULT_CUSTOMER_COLUMNS;
     }
   });
+
+  useEffect(() => {
+    localStorage.setItem("apex-gt-customer-cols", JSON.stringify(columns));
+  }, [columns]);
 
   // ── Selection ─────────────────────────────────────────────────────────────
   const [selected, setSelected] = useState(new Set());
@@ -197,12 +203,38 @@ function Customers() {
 
   const handleExport = useCallback(
     (type) => {
-      apexToast.info(
-        `Export ${type}`,
-        `Exporting ${filtered.length} customers as ${type}.`,
-      );
+      const exportCols = [
+        { id: "customerId", label: "Customer ID" },
+        { id: "customer", label: "Name" },
+        { id: "status", label: "Status" },
+        { id: "mobile", label: "Mobile" },
+        { id: "source", label: "Source" },
+        { id: "purchases", label: "Purchases" },
+        { id: "spent", label: "Total Spent" },
+        { id: "dob", label: "Birthday" },
+        { id: "instagram", label: "Instagram" },
+      ];
+
+      if (type === "Excel") {
+        exportToExcel(filtered, exportCols, "apex-gt-customers");
+        apexToast.success(
+          "Excel Exported",
+          `${filtered.length} customers exported.`,
+        );
+      } else {
+        exportToPDF(
+          filtered,
+          exportCols,
+          "Customer Report",
+          "apex-gt-customers",
+        );
+        apexToast.success(
+          "PDF Exported",
+          `${filtered.length} customers exported.`,
+        );
+      }
     },
-    [filtered.length],
+    [filtered],
   );
 
   const openView = useCallback(
@@ -265,6 +297,7 @@ function Customers() {
         }}
         perPage={PER_PAGE}
         selected={selected}
+        columns={columns}
         onToggleSelect={toggleSelect}
         onSelectAll={selectAll}
         sortField={sortField}

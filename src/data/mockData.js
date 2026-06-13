@@ -686,3 +686,16 @@ export const customers = [
     ],
   },
 ];
+
+// Add to src/data/mockData.js
+
+export const DEFAULT_CUSTOMER_COLUMNS = [
+  { id: "customer", label: "Customer", visible: true, canHide: false },
+  { id: "status", label: "Status", visible: true, canHide: true },
+  { id: "mobile", label: "Mobile", visible: true, canHide: true },
+  { id: "source", label: "Source", visible: true, canHide: true },
+  { id: "purchases", label: "Purchases", visible: true, canHide: true },
+  { id: "spent", label: "Total Spent", visible: true, canHide: true },
+  { id: "dob", label: "Birthday", visible: true, canHide: true },
+  { id: "instagram", label: "Instagram", visible: true, canHide: true },
+];

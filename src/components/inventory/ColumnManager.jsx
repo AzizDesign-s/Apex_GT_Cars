@@ -2,6 +2,7 @@
 // Toggle column visibility + drag to reorder.
 // Uses @dnd-kit/sortable for drag reordering.
 
+import { useRef, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -65,12 +66,29 @@ function SortableCol({ col, onToggle }) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 function ColumnManager({ columns, onColumnsChange, isOpen, onClose }) {
+  const popupRef = useRef(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
+  useEffect(() => {
+    if (!isOpen || !popupRef.current) return;
+    const rect = popupRef.current.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) {
+      // Would overflow right edge → align to left instead
+      popupRef.current.style.right = "auto";
+      popupRef.current.style.left = "0";
+    }
+    if (rect.left < 8) {
+      // Would overflow left edge → align to right
+      popupRef.current.style.left = "auto";
+      popupRef.current.style.right = "0";
+    }
+  }, [isOpen]);
 
   const handleDragEnd = ({ active, over }) => {
     if (active.id !== over?.id) {
@@ -94,8 +112,10 @@ function ColumnManager({ columns, onColumnsChange, isOpen, onClose }) {
         <>
           <div className="fixed inset-0 z-10" onClick={onClose} />
           <motion.div
+            ref={popupRef}
             className="absolute right-0 top-[calc(100%+6px)] w-64 z-20
-                       bg-card border border-border rounded-xl shadow-glass overflow-hidden"
+           bg-card border border-border rounded-xl shadow-glass overflow-hidden
+           max-[400px]:right-auto max-[400px]:left-0"
             initial={{ opacity: 0, y: -8, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}

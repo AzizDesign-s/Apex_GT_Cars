@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { cars as initialCars, DEFAULT_COLUMNS } from "../data/mockData";
+import { exportToExcel, exportToPDF } from "../utils/exportUtils";
 
 // ── Reusable UI components ────────────────────────────────────────────────────
 import { DeleteConfirm, ChangeStatusModal } from "../components/ui";
@@ -238,15 +239,33 @@ function Inventory() {
     [selected],
   );
 
-  // ── Export (placeholder — Phase 8 will implement) ─────────────────────────
   const handleExport = useCallback(
     (type) => {
-      apexToast.info(
-        `Export ${type}`,
-        `Exporting ${filtered.length} cars — coming in Phase 8.`,
+      // Only export visible columns (skip image column for exports)
+      const exportCols = columns.filter(
+        (col) => col.visible && col.id !== "image",
       );
+
+      if (type === "Excel") {
+        exportToExcel(filtered, exportCols, "apex-gt-inventory");
+        apexToast.success(
+          "Excel Exported",
+          `${filtered.length} cars exported successfully.`,
+        );
+      } else {
+        exportToPDF(
+          filtered,
+          exportCols,
+          "Inventory Report",
+          "apex-gt-inventory",
+        );
+        apexToast.success(
+          "PDF Exported",
+          `${filtered.length} cars exported successfully.`,
+        );
+      }
     },
-    [filtered.length],
+    [filtered, columns],
   );
 
   // ── Reset all filters ─────────────────────────────────────────────────────
